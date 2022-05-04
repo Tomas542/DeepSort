@@ -11,7 +11,7 @@ nav {
     margin-left: -10px;
     height: 50px;
 }
-button{
+input{
     background-color: rgb(42, 02, 88);
     border: 0px;
     margin-top: 12.3px;
@@ -20,13 +20,13 @@ button{
     font-size:20px;
     color: white;
 }
-button:hover{
+input:hover{
     background-color: white;
     transition-duration: 70ms;
     color:black;
     border-radius: 5px;
 }
-button + button{
+input + input{
     margin-left: 2%;
 }
 a{
