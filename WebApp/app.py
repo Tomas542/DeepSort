@@ -1,20 +1,13 @@
 import os.path
 import sys
-from flask import Flask, redirect, request, render_template, url_for
+from flask import Flask, redirect, request, render_template
 from werkzeug.utils import secure_filename
 
 
-upload_folder = '/video'
 allowed_extensions = {'mp4', 'docx'}
 
 
 app = Flask(__name__)
-
-
-
-def allowed_file(filename):
-    return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
 
 @app.route('/', methods=['GET'])
