@@ -1,5 +1,6 @@
 import os.path
 import sys
+
 from flask import Flask, redirect, request, render_template
 from werkzeug.utils import secure_filename
 
@@ -31,7 +32,7 @@ def page_main():
         else:
             f.save(os.path.join('source', filename))
             os.system(f'python3 ../Yolov5_DeepSort_OSNet/track.py --source ../WebApp/source/{filename} --yolo_model ../weights/best_2.pt --save-vid')
-            print('adadasdads')
+
     return render_template('Main.html')
 
 
