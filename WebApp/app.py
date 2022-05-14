@@ -29,7 +29,9 @@ def page_main():
         if filename.split('.')[1] not in allowed_extensions:
             return 'Error file type'
         else:
-            f.save(os.path.join(os.path.dirname(sys.argv[0]), filename))
+            f.save(os.path.join('source', filename))
+            os.system(f'python3 ../Yolov5_DeepSort_OSNet/track.py --source ../WebApp/source/{filename} --yolo_model ../weights/best_2.pt --save-vid')
+            print('adadasdads')
     return render_template('Main.html')
 
 

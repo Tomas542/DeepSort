@@ -1,9 +1,13 @@
 # vim: expandtab:ts=4:sw=4
 import numpy as np
+
 import sys
 import torch
-sys.path.append('deep_sort/deep/reid')
+sys.path.append('../Yolov5_DeepSort_OSNet/deep_sort/deep/reid')
+
+
 from torchreid.metrics.distance import compute_distance_matrix
+
 
 
 def _pdist(a, b):

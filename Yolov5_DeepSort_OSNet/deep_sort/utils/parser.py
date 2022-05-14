@@ -1,6 +1,9 @@
 import os
 import yaml
 from easydict import EasyDict as edict
+print(os.getcwd())
+os.chdir('../Yolov5_DeepSort_OSNet')
+print(os.getcwd())
 
 
 class YamlParser(edict):
@@ -11,7 +14,7 @@ class YamlParser(edict):
     def __init__(self, cfg_dict=None, config_file=None):
         if cfg_dict is None:
             cfg_dict = {}
-
+        print(config_file)
         if config_file is not None:
             assert(os.path.isfile(config_file))
             with open(config_file, 'r') as fo:
