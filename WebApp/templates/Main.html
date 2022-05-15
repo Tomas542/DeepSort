@@ -13,7 +13,13 @@
                 <input type="submit" name="About_Project" value="О проекте">
             </nav>
             <p>Здесь будет наше видео:</p>
-            <video src="./out3.mp4" controls></video>
+            <p>
+                {% if filename %}
+
+                {% endif %}
+                <video src="{{filename}}" controls></video>
+            </p>
+
         </form>
         <form method="POST" enctype="multipart/form-data">
             <input type="file" name="file">

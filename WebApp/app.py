@@ -3,7 +3,7 @@ import sys
 
 from flask import Flask, redirect, request, render_template
 from werkzeug.utils import secure_filename
-
+import ffmpeg
 
 allowed_extensions = {'mp4', 'docx'}
 
@@ -26,13 +26,16 @@ def page_main():
         elif request.form.get("About_Project"):
             return redirect("/about_project/")
         f = request.files['file']
-        filename = secure_filename(f.filename)
-        if filename.split('.')[1] not in allowed_extensions:
-            return 'Error file type'
-        else:
-            f.save(os.path.join('source', filename))
-            os.system(f'python3 ../Yolov5_DeepSort_OSNet/track.py --source ../WebApp/source/{filename} --yolo_model ../weights/best_2.pt --save-vid')
-
+        if f:
+            filename = secure_filename(f.filename)
+            if filename.split('.')[1] not in allowed_extensions:
+                return 'Error file type'
+            else:
+                f.save(os.path.join('source', filename))
+                os.system(f'python3 ../Yolov5_DeepSort_OSNet/track.py --source ../WebApp/source/{filename} --yolo_model ../weights/best_3n.pt --save-vid')
+                os.remove(f'source/{filename}')
+                os.system(f'ffmpeg -i ../Yolov5_DeepSort_OSNet/runs/track/_osnet_x0_25/{filename} -c:a copy -s hd720 output.webm')
+                return render_template('Main.html', filename='source/output.webm')
     return render_template('Main.html')
 
 
