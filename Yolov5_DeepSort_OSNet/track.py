@@ -7,7 +7,7 @@ os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
 os.environ["NUMEXPR_NUM_THREADS"] = "1"
 
 import sys
-sys.path.insert(0, 'yolov5')
+sys.path.insert(0, './yolov5')
 
 import argparse
 import os
