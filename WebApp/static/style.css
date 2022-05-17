@@ -13,18 +13,21 @@ nav {
 }
 input{
     background-color: rgb(42, 02, 88);
-    border: 0px;
+    border-width: 3px;
+    border-radius:5px;
+    border-color: rgb(42, 02, 88);
     margin-top: 12.3px;
     margin-left: 38%;
     transition-duration: 70ms;
     font-size:20px;
     color: white;
-    border-radius:5px;
+    
 }
 input:hover{
     background-color: white;
     transition-duration: 70ms;
     color:black;
+    border-width: 3px;
     border-radius: 5px;
     border-color = rgb(42, 02, 88);
 }
