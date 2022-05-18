@@ -15,15 +15,27 @@
             <p>Здесь будет наше видео:</p>
             <p>
                 {% if filename %}
-
+                    <video width="720" height="480" controls>
+                        <source src="/static/{{filename}}.webm" type="video/mp4">
+                    </video>
                 {% endif %}
-                <video src="{{filename}}" controls></video>
             </p>
+            <input type="submit" name="Show_video" value="Показать видео">
+            <input type="submit" name="Delete_video" value="Удалить видео">
 
         </form>
         <form method="POST" enctype="multipart/form-data">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <p>
             <input type="file" name="file">
             <input type="submit" value="Загрузить">
+            </p>
         </form>
     </body>
 </html>
