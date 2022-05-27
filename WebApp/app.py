@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
 allowed_extensions = {'mp4'}
+check = 0
 
 
 @app.route('/', methods=['GET'])
@@ -15,6 +16,7 @@ def index():
 
 @app.route('/main', methods=['POST', 'GET'])
 def page_main():
+    global check
     if request.method == 'POST':
         if request.form.get('Main'):
             return redirect("/main")
@@ -23,21 +25,25 @@ def page_main():
         elif request.form.get("About_Project"):
             return redirect("/about_project/")
         elif request.form.get("Show_video"):
-            if os.path.isfile(f'static/output.webm'):
-                return render_template("Main.html", filename='output')
+            if check == 0:
+                if os.path.isfile(f'static/output.webm'):
+                    return render_template("Main.html", filename='output')
+                else:
+                    flash('Upload video, please.', 'danger')
             else:
-                flash('Upload video, please.', 'danger')
-                return redirect("/main")
+                flash('Video is being processed!', 'danger')
+            return redirect("/main")
         elif request.form.get("Delete_video"):
-            if os.path.isfile('static/output.webm'):
-                os.remove('static/output.webm')
-                flash('Video was deleted.', 'success')
-                return redirect("/main")
+            if check == 0:
+                if os.path.isfile('static/output.webm'):
+                    os.remove('static/output.webm')
+                    flash('Video was deleted.', 'success')
+                    return redirect("/main")
+                else:
+                    flash('There is no video.', 'danger')
             else:
-                flash('There is no video.', 'danger')
-                return redirect("/main")
-
-
+                flash('Video is being processed!', 'danger')
+            return redirect("/main")
         f = request.files['file']
         if f:
             filename = secure_filename(f.filename)
@@ -45,14 +51,23 @@ def page_main():
             if filename.split('.')[1] not in allowed_extensions:
                 flash('Error file type!', 'danger')
             else:
-                f.save(os.path.join('static', filename))
-                flash('Upload load successful. Wait a minute pls', 'success')
-                os.system(f'python3 ../Yolov5_DeepSort_OSNet/track.py --source ../WebApp/static/{filename} --yolo_model ../weights/best_3n.pt --save-vid')
-                os.remove(f'static/{filename}')
-                os.system(f'ffmpeg -i ../Yolov5_DeepSort_OSNet/runs/track/_osnet_x0_25/{filename} -c:a copy -s 720x480 static/output.webm')
-                os.remove(f'../Yolov5_DeepSort_OSNet/runs/track/_osnet_x0_25/{filename}')
-                os.rmdir(f'../Yolov5_DeepSort_OSNet/runs/track/_osnet_x0_25')
+                if check == 0:
+                    f.save(os.path.join('static', filename))
+                    check = 1
+                    flash('Upload load successful. Wait a minute pls', 'success')
+                    if os.path.isfile('static/output.webm'):
+                        os.remove('static/output.webm')
 
+                    os.system(f'python3 ../Yolov5_DeepSort_OSNet/track.py --source ../WebApp/static/{filename}'
+                              f' --yolo_model ../weights/best_3n.pt --save-vid')
+                    os.remove(f'static/{filename}')
+                    os.system(f'ffmpeg -i ../Yolov5_DeepSort_OSNet/runs/track/_osnet_x0_25/{filename} -c:a copy -s '
+                              f'720x480 static/output.webm')
+                    os.remove(f'../Yolov5_DeepSort_OSNet/runs/track/_osnet_x0_25/{filename}')
+                    os.rmdir(f'../Yolov5_DeepSort_OSNet/runs/track/_osnet_x0_25')
+                    check = 0
+                else:
+                    flash('Video is being processed!', 'danger')
         else:
             flash('No file selected!', 'danger')
 
