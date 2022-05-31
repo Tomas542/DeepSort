@@ -21,6 +21,7 @@ input{
     transition-duration: 70ms;
     font-size:20px;
     color: white;
+    
 }
 input:hover{
     background-color: white;
