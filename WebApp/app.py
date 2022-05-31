@@ -59,7 +59,7 @@ def page_main():
                         os.remove('static/output.webm')
 
                     os.system(f'python3 ../Yolov5_DeepSort_OSNet/track.py --source ../WebApp/static/{filename}'
-                              f' --yolo_model ../weights/best_3n.pt --save-vid')
+                              f' --yolo_model ../weights/best_7n.pt --save-vid')
                     os.remove(f'static/{filename}')
                     os.system(f'ffmpeg -i ../Yolov5_DeepSort_OSNet/runs/track/_osnet_x0_25/{filename} -c:a copy -s '
                               f'720x480 static/output.webm')
