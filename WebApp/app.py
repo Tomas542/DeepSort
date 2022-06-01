@@ -10,7 +10,6 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
 allowed_extensions = {'mp4'}
 check = 0
-app.config['UPLOAD_FOLDER'] = 'static'
 
 conn = psycopg2.connect(database="webapp_db",
                         user="postgres",
@@ -38,7 +37,7 @@ def page_main():
             return redirect("/about_project/")
         elif request.form.get("Show_video"):
             if check == 0:
-                if os.path.isfile(f'static/output.webm'):
+                if os.path.isfile('static/output.webm'):
                     return render_template("Main.html", filename='output')
                 else:
                     flash('Upload video, please.', 'danger')
@@ -70,7 +69,7 @@ def page_main():
             filename = secure_filename(f.filename)
 
             if filename.split('.')[1] not in allowed_extensions:
-                flash('Error file type!', 'danger')
+                flash('Error file type! Only mp4 supported', 'danger')
             else:
                 if check == 0:
                     if os.path.isdir('../Yolov5_DeepSort_OSNet/runs'):
@@ -93,7 +92,7 @@ def page_main():
                     if os.path.isdir('../Yolov5_DeepSort_OSNet/runs'):
                         shutil.rmtree('../Yolov5_DeepSort_OSNet/runs')
                     if os.path.isfile('../Yolov5_DeepSort_OSNet/res.txt'):
-                        os.rename('../Yolov5_DeepSort_OSNet/res.txt', f'static/res.txt')
+                        os.rename('../Yolov5_DeepSort_OSNet/res.txt', 'static/res.txt')
                     video = filename.split('.')[0]
                     with open('static/res.txt', 'r') as f:
                         for line in f.readlines():
@@ -110,7 +109,6 @@ def page_main():
                     flash('Video is being processed!', 'danger')
         else:
             flash('No file selected!', 'danger')
-
     return render_template('Main.html')
 
 
