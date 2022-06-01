@@ -1,0 +1,39 @@
+version: '3'
+services:
+  flask:
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: webapp-flask
+
+    environment:
+      # для отладки
+      - FLASK_ENV=development
+      ## Позволяет отслеживать процесс работы приложения в командной строке
+      - PYTHONUNBUFFERED=True
+
+    # Перезапускаем сервис в случае падения
+    restart: on-failure
+    # Прокладывам путь для файлов.
+
+    volumes:
+      - ./WebApp:/WebApp
+
+    # Порт, который будет смотреть наружу : порт который используется внутри контейнера
+    ports:
+      - "8080:8080"
+    command: python app.py
+
+  db:
+    image: postgres:13.3
+    environment:
+      POSTGRES_PASSWORD: '123'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_DB: 'webapp_db'
+    volumes:
+      - ../2. Init Database:/webapp_db.d
+      - .:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
