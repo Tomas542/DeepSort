@@ -6,7 +6,7 @@ body{
 }
 nav {
     background-color: rgb(42, 02, 88);
-    width: calc(100% - (-10px));
+    width: calc(100% + 20px);
     border-bottom: 10px;
     margin-left: -10px;
     height: 50px;
@@ -40,4 +40,12 @@ a{
 pre{
     font-family: Arial, Helvetica, sans-serif;
     line-height: 23px;
+}
+button{
+    background-color: rgb(42, 02, 88);
+    border-width: 3px;
+    border-radius: 5px;
+    border-color: rgb(42, 02, 88);
+    height: 24px;
+    width: 48px;
 }
