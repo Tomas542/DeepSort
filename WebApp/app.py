@@ -1,12 +1,24 @@
 import os
-from flask import Flask, redirect, request, render_template, flash
+import shutil
+from flask import Flask, redirect, request, render_template, flash, send_file
 from werkzeug.utils import secure_filename
+import psycopg2
+from datetime import datetime
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
 allowed_extensions = {'mp4'}
 check = 0
+app.config['UPLOAD_FOLDER'] = 'static'
+
+conn = psycopg2.connect(database="webapp_db",
+                        user="postgres",
+                        password="123",
+                        host="localhost",
+                        port="5432")
+
+cursor = conn.cursor()
 
 
 @app.route('/', methods=['GET'])
@@ -33,14 +45,23 @@ def page_main():
             else:
                 flash('Video is being processed!', 'danger')
             return redirect("/main")
-        elif request.form.get("Delete_video"):
+        elif request.form.get("Download_video"):
             if check == 0:
                 if os.path.isfile('static/output.webm'):
-                    os.remove('static/output.webm')
-                    flash('Video was deleted.', 'success')
-                    return redirect("/main")
+                    flash('Video was sent to you.', 'success')
+                    return send_file('static/output.webm', as_attachment=True)
                 else:
                     flash('There is no video.', 'danger')
+            else:
+                flash('Video is being processed!', 'danger')
+            return redirect("/main")
+        elif request.form.get("Download_txt"):
+            if check == 0:
+                if os.path.isfile('static/res.txt'):
+                    flash('Txt was sent to you.', 'success')
+                    return send_file('static/res.txt', as_attachment=True)
+                else:
+                    flash('There is no txt.', 'danger')
             else:
                 flash('Video is being processed!', 'danger')
             return redirect("/main")
@@ -52,19 +73,38 @@ def page_main():
                 flash('Error file type!', 'danger')
             else:
                 if check == 0:
+                    if os.path.isdir('../Yolov5_DeepSort_OSNet/runs'):
+                        shutil.rmtree('../Yolov5_DeepSort_OSNet/runs')
                     f.save(os.path.join('static', filename))
                     check = 1
                     flash('Upload load successful. Wait a minute pls', 'success')
                     if os.path.isfile('static/output.webm'):
                         os.remove('static/output.webm')
+                    if os.path.isfile('../Yolov5_DeepSort_OSNet/res.txt'):
+                        os.remove('../Yolov5_DeepSort_OSNet/res.txt')
+                    if os.path.isfile('static/res.txt'):
+                        os.remove('static/res.txt')
 
                     os.system(f'python3 ../Yolov5_DeepSort_OSNet/track.py --source ../WebApp/static/{filename}'
                               f' --yolo_model ../weights/best_7n.pt --save-vid')
                     os.remove(f'static/{filename}')
                     os.system(f'ffmpeg -i ../Yolov5_DeepSort_OSNet/runs/track/_osnet_x0_25/{filename} -c:a copy -s '
                               f'720x480 static/output.webm')
-                    os.remove(f'../Yolov5_DeepSort_OSNet/runs/track/_osnet_x0_25/{filename}')
-                    os.rmdir(f'../Yolov5_DeepSort_OSNet/runs/track/_osnet_x0_25')
+                    if os.path.isdir('../Yolov5_DeepSort_OSNet/runs'):
+                        shutil.rmtree('../Yolov5_DeepSort_OSNet/runs')
+                    if os.path.isfile('../Yolov5_DeepSort_OSNet/res.txt'):
+                        os.rename('../Yolov5_DeepSort_OSNet/res.txt', f'static/res.txt')
+                    video = filename.split('.')[0]
+                    with open('static/res.txt', 'r') as f:
+                        for line in f.readlines():
+                            dt = str(datetime.now())
+                            clss = line.split(' ')[0]
+                            num = line.split(' ')[1]
+                            time = line.split(' ')[2]
+                            accuracy = line.split(' ')[3].split('\n')[0]
+                            cursor.execute("INSERT INTO main.info (video, datetime, class, number, time, accuracy) VALUES (%s, %s, %s, %s, %s, %s);",
+                                           (video, dt, clss, num, time, accuracy))
+                            conn.commit()
                     check = 0
                 else:
                     flash('Video is being processed!', 'danger')

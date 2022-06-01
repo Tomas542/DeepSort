@@ -31,6 +31,7 @@ from yolov5.utils.plots import Annotator, colors, save_one_box
 from deep_sort.utils.parser import get_config
 from deep_sort.deep_sort import DeepSort
 
+
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # yolov5 deepsort root directory
 if str(ROOT) not in sys.path:
@@ -166,7 +167,6 @@ def detect(opt):
             imc = im0.copy() if save_crop else im0  # for save_crop
 
             annotator = Annotator(im0, line_width=2, pil=not ascii)
-
             if det is not None and len(det):
                 # Rescale boxes from img_size to im0 size
                 det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()
@@ -185,7 +185,6 @@ def detect(opt):
                 outputs[i] = deepsort_list[i].update(xywhs.cpu(), confs.cpu(), clss.cpu(), im0)
                 t5 = time_sync()
                 dt[3] += t5 - t4
-
                 # draw boxes for visualization
                 if len(outputs[i]) > 0:
                     for j, (output) in enumerate(outputs[i]):
@@ -194,18 +193,23 @@ def detect(opt):
                         id = output[4]
                         cls = output[5]
                         conf = output[6]
-
                         if save_txt:
                             # to MOT format
                             bbox_left = output[0]
                             bbox_top = output[1]
                             bbox_w = output[2] - output[0]
                             bbox_h = output[3] - output[1]
+
                             # Write MOT compliant results to file
                             with open(txt_path + '.txt', 'a') as f:
                                 f.write(('%g ' * 10 + '\n') % (frame_idx + 1, id, bbox_left,  # MOT format
                                                                bbox_top, bbox_w, bbox_h, -1, -1, -1, i))
-
+                        time_txt = f'{t5 - t4:.3f}'
+                        acc = f'{output[6]:.2f}'
+                        ours = str(names[int(output[5])]) + ' ' + str(int(output[4])) + ' ' + str(time_txt) + ' ' + str(acc)
+                        res_file = open('res.txt', 'a+')
+                        res_file.write(str(ours + '\n'))
+                        res_file.close()
                         if save_vid or save_crop or show_vid:  # Add bbox to image
                             c = int(cls)  # integer class
                             label = f'{id:0.0f} {names[c]} {conf:.2f}'
@@ -241,7 +245,6 @@ def detect(opt):
                     save_path = str(Path(save_path).with_suffix('.mp4'))  # force *.mp4 suffix on results videos
                     vid_writer[i] = cv2.VideoWriter(save_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
                 vid_writer[i].write(im0)
-
     # Print results
     t = tuple(x / seen * 1E3 for x in dt)  # speeds per image
     LOGGER.info(f'Speed: %.1fms pre-process, %.1fms inference, %.1fms NMS, %.1fms deep sort update \
