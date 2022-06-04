@@ -9,5 +9,5 @@ def frames():
                 line = line.split(' ')
                 frame_now = line[0]
                 frame_all = line[1]
-                result = (int(frame_now)/int(frame_all))
+                result = round(round((int(frame_now)/int(frame_all)), 2)*100)
                 return result

@@ -33,7 +33,8 @@
                             {{ message }}
                             <p>
                             <label for="file">File progress:</label>
-                            <progress id="file" max="1" value="{{percent}}"> {{percent}}</progress>
+                            <progress id="file" max="100" value="{{ percent }}"> {{ percent }} </progress>
+                            {{ percent }}%
                             </p>
                         {% else %}
                             {{ message }}

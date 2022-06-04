@@ -16,7 +16,7 @@ check = 0
 
 conn = psycopg2.connect(database="webapp_db",
                         user="postgres",
-                        password="123",
+                        password="1234567890",
                         host="localhost",
                         port="5432")
 
