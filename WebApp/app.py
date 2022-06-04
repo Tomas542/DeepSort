@@ -32,6 +32,7 @@ def index():
 @app.route('/main', methods=['POST', 'GET'])
 def page_main():
     global check
+    percent = 0
     bar_check = ''
     if request.method == 'POST':
         if request.form.get('Main'):
@@ -49,7 +50,8 @@ def page_main():
             else:
                 flash('Video is being processed!', 'danger')
                 bar_check = 'aaa'
-            return render_template("Main.html", bar_check=bar_check, percent=frames())
+                percent = frames()
+            return render_template("Main.html", bar_check=bar_check, percent=percent)
             bar_check = ''
 
         elif request.form.get("Download_video"):
@@ -62,7 +64,8 @@ def page_main():
             else:
                 flash('Video is being processed!', 'danger')
                 bar_check = 'aaa'
-            return render_template("Main.html", bar_check=bar_check, percent=frames())
+                percent = frames()
+            return render_template("Main.html", bar_check=bar_check, percent=percent)
             bar_check = ''
         elif request.form.get("Download_txt"):
             if check == 0:
@@ -74,7 +77,8 @@ def page_main():
             else:
                 flash('Video is being processed!', 'danger')
                 bar_check = 'aaa'
-            return render_template("Main.html", bar_check=bar_check, percent=frames())
+                percent = frames()
+            return render_template("Main.html", bar_check=bar_check, percent=percent)
             bar_check = ''
         f = request.files['file']
         if f:
@@ -130,9 +134,10 @@ def page_main():
                 else:
                     flash('Video is being processed!', 'danger')
                     bar_check = 'aaa'
+                    percent = frames()
         else:
             flash('No file selected!', 'danger')
-    return render_template("Main.html", bar_check=bar_check, percent=frames())
+    return render_template("Main.html", bar_check=bar_check, percent=percent)
     bar_check = ''
 
 
