@@ -3,7 +3,6 @@ import shutil
 from flask import Flask, redirect, request, render_template, flash, send_file
 from werkzeug.utils import secure_filename
 import psycopg2
-from datetime import datetime
 from time import sleep
 from Del_func import Del
 from Add_time import Add_time
