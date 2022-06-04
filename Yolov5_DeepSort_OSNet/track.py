@@ -1,4 +1,5 @@
 # limit the number of cpus used by high performance libraries
+from datetime import datetime
 import os
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
@@ -121,6 +122,10 @@ def detect(opt):
     # Run tracking
     model.warmup(imgsz=(1 if pt else nr_sources, 3, *imgsz))  # warmup
     dt, seen = [0.0, 0.0, 0.0, 0.0], 0
+
+    item_dicti = {}
+    id_dicti = {}
+    last_time = {}
     for frame_idx, (path, im, im0s, vid_cap, s) in enumerate(dataset):
         t1 = time_sync()
         im = torch.from_numpy(im).to(device)
@@ -204,12 +209,27 @@ def detect(opt):
                             with open(txt_path + '.txt', 'a') as f:
                                 f.write(('%g ' * 10 + '\n') % (frame_idx + 1, id, bbox_left,  # MOT format
                                                                bbox_top, bbox_w, bbox_h, -1, -1, -1, i))
+
                         time_txt = f'{t5 - t4:.3f}'
                         acc = f'{output[6]:.2f}'
-                        ours = str(names[int(output[5])]) + ' ' + str(int(output[4])) + ' ' + str(time_txt) + ' ' + str(acc)
-                        res_file = open('res.txt', 'a+')
-                        res_file.write(str(ours + '\n'))
-                        res_file.close()
+                        ours = str(names[int(output[5])]) + '\t' + str(int(output[4])) + '\t' + str(time_txt) + '\t' + str(acc) + '\t' + str(datetime.now())
+
+                        clss_key = str(names[int(output[5])])
+                        id_key = str(int(output[4]))
+                        if clss_key not in item_dicti:
+                            item_dicti.setdefault(clss_key, [])
+                        if id_key not in item_dicti[clss_key]:
+                            id_dicti.setdefault(id_key, [])
+                            id_dicti[id_key].append(str(time_txt) + '\t' + str(acc) + '\t' + str(datetime.now()))
+                            item_dicti[clss_key].append(id_key)
+                            with open('res.txt', 'a+') as f:
+                                f.write(str(ours + '\n'))
+                        else:
+                            last_time.update({id_key: str(datetime.now())})
+                            with open('time.txt', 'w') as t:
+                                for key in last_time:
+                                    t.write(key + '\t' + last_time[key] + '\n')
+
                         if save_vid or save_crop or show_vid:  # Add bbox to image
                             c = int(cls)  # integer class
                             label = f'{id:0.0f} {names[c]} {conf:.2f}'
@@ -246,6 +266,7 @@ def detect(opt):
                     vid_writer[i] = cv2.VideoWriter(save_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
                 vid_writer[i].write(im0)
     # Print results
+
     t = tuple(x / seen * 1E3 for x in dt)  # speeds per image
     LOGGER.info(f'Speed: %.1fms pre-process, %.1fms inference, %.1fms NMS, %.1fms deep sort update \
         per image at shape {(1, 3, *imgsz)}' % t)

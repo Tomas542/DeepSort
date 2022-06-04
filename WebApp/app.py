@@ -4,6 +4,9 @@ from flask import Flask, redirect, request, render_template, flash, send_file
 from werkzeug.utils import secure_filename
 import psycopg2
 from datetime import datetime
+from time import sleep
+from Del_func import Del
+from Add_time import Add_time
 
 
 app = Flask(__name__)
@@ -18,6 +21,7 @@ conn = psycopg2.connect(database="webapp_db",
                         port="5432")
 
 cursor = conn.cursor()
+Del()
 
 
 @app.route('/', methods=['GET'])
@@ -72,38 +76,48 @@ def page_main():
                 flash('Error file type! Only mp4 supported', 'danger')
             else:
                 if check == 0:
-                    if os.path.isdir('../Yolov5_DeepSort_OSNet/runs'):
-                        shutil.rmtree('../Yolov5_DeepSort_OSNet/runs')
+
                     f.save(os.path.join('static', filename))
                     check = 1
                     flash('Upload load successful. Wait a minute pls', 'success')
-                    if os.path.isfile('static/output.webm'):
-                        os.remove('static/output.webm')
-                    if os.path.isfile('../Yolov5_DeepSort_OSNet/res.txt'):
-                        os.remove('../Yolov5_DeepSort_OSNet/res.txt')
-                    if os.path.isfile('static/res.txt'):
-                        os.remove('static/res.txt')
+
+                    Del()
 
                     os.system(f'python3 ../Yolov5_DeepSort_OSNet/track.py --source ../WebApp/static/{filename}'
                               f' --yolo_model ../weights/best_7n.pt --save-vid')
                     os.remove(f'static/{filename}')
                     os.system(f'ffmpeg -i ../Yolov5_DeepSort_OSNet/runs/track/_osnet_x0_25/{filename} -c:a copy -s '
                               f'720x480 static/output.webm')
+
                     if os.path.isdir('../Yolov5_DeepSort_OSNet/runs'):
                         shutil.rmtree('../Yolov5_DeepSort_OSNet/runs')
                     if os.path.isfile('../Yolov5_DeepSort_OSNet/res.txt'):
                         os.rename('../Yolov5_DeepSort_OSNet/res.txt', 'static/res.txt')
+                    while True:
+                        if os.path.isfile('static/res.txt'):
+                            break
+                        else:
+                            sleep(0.5)
                     video = filename.split('.')[0]
+
+                    Add_time()
+
+                    os.rename('static/res1.txt', 'static/res.txt')
+
                     with open('static/res.txt', 'r') as f:
                         for line in f.readlines():
-                            dt = str(datetime.now())
-                            clss = line.split(' ')[0]
-                            num = line.split(' ')[1]
-                            time = line.split(' ')[2]
-                            accuracy = line.split(' ')[3].split('\n')[0]
-                            cursor.execute("INSERT INTO main.info (video, datetime, class, number, time, accuracy) VALUES (%s, %s, %s, %s, %s, %s);",
-                                           (video, dt, clss, num, time, accuracy))
+                            clss = line.split('\t')[0]
+                            num = line.split('\t')[1]
+                            time = line.split('\t')[2]
+                            accuracy = line.split('\t')[3]
+                            time_f = line.split('\t')[4]
+                            time_l = line.split('\t')[5].split('\n')[0]
+                            cursor.execute(
+                                "INSERT INTO main.info (video, time_found, time_lost, class, number, time, accuracy) "
+                                "VALUES (%s, %s, %s, %s, %s, %s, %s);",
+                                (video, time_f, time_l, clss, num, time, accuracy))
                             conn.commit()
+
                     check = 0
                 else:
                     flash('Video is being processed!', 'danger')
