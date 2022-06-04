@@ -3,10 +3,10 @@ import shutil
 from flask import Flask, redirect, request, render_template, flash, send_file
 from werkzeug.utils import secure_filename
 import psycopg2
-from datetime import datetime
 from time import sleep
 from Del_func import Del
 from Add_time import Add_time
+from Frames import frames
 
 
 app = Flask(__name__)
@@ -61,7 +61,7 @@ def page_main():
                     flash('There is no video.', 'danger')
             else:
                 flash('Video is being processed!', 'danger')
-                print('nazhal')
+                print(int(our_frames))
                 bar_check = 'aaa'
             return render_template("Main.html", bar_check=bar_check)
             bar_check = ''

@@ -1,8 +1,6 @@
 # limit the number of cpus used by high performance libraries
 from datetime import datetime
 import os
-import string
-
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
@@ -33,6 +31,8 @@ from yolov5.utils.torch_utils import select_device, time_sync
 from yolov5.utils.plots import Annotator, colors, save_one_box
 from deep_sort.utils.parser import get_config
 from deep_sort.deep_sort import DeepSort
+
+from DeepSort_Gstreamer.WebApp.Frames import frames
 
 
 FILE = Path(__file__).resolve()
