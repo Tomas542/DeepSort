@@ -15,4 +15,6 @@ def Del():
         os.remove('static/res1.txt')
     if os.path.isfile('../Yolov5_DeepSort_OSNet/time.txt'):
         os.remove('../Yolov5_DeepSort_OSNet/time.txt')
+    if os.path.isfile('../Yolov5_DeepSort_OSNet/frame.txt'):
+        os.remove('../Yolov5_DeepSort_OSNet/frame.txt')
     return None

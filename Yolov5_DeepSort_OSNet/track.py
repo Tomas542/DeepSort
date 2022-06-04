@@ -239,6 +239,8 @@ def detect(opt):
                                 txt_file_name = txt_file_name if (isinstance(path, list) and len(path) > 1) else ''
                                 save_one_box(bboxes, imc, file=save_dir / 'crops' / txt_file_name / names[c] / f'{id}' / f'{p.stem}.jpg', BGR=True)
                 our_frames = s.split(' ')[2].replace('(', '').replace(')', '').replace('/', ' ')
+                with open('frame.txt', 'w') as f:
+                    f.write(str(our_frames))
                 LOGGER.info(f'{s}Done. YOLO:({t3 - t2:.3f}s), DeepSort:({t5 - t4:.3f}s)')
 
             else:

@@ -16,7 +16,7 @@ check = 0
 
 conn = psycopg2.connect(database="webapp_db",
                         user="postgres",
-                        password="1234567890",
+                        password="123",
                         host="localhost",
                         port="5432")
 
@@ -49,7 +49,7 @@ def page_main():
             else:
                 flash('Video is being processed!', 'danger')
                 bar_check = 'aaa'
-            return render_template("Main.html", bar_check=bar_check)
+            return render_template("Main.html", bar_check=bar_check, percent=frames())
             bar_check = ''
 
         elif request.form.get("Download_video"):
@@ -61,9 +61,8 @@ def page_main():
                     flash('There is no video.', 'danger')
             else:
                 flash('Video is being processed!', 'danger')
-                print(int(our_frames))
                 bar_check = 'aaa'
-            return render_template("Main.html", bar_check=bar_check)
+            return render_template("Main.html", bar_check=bar_check, percent=frames())
             bar_check = ''
         elif request.form.get("Download_txt"):
             if check == 0:
@@ -75,7 +74,7 @@ def page_main():
             else:
                 flash('Video is being processed!', 'danger')
                 bar_check = 'aaa'
-            return render_template("Main.html", bar_check=bar_check)
+            return render_template("Main.html", bar_check=bar_check, percent=frames())
             bar_check = ''
         f = request.files['file']
         if f:
@@ -133,7 +132,7 @@ def page_main():
                     bar_check = 'aaa'
         else:
             flash('No file selected!', 'danger')
-    return render_template("Main.html", bar_check=bar_check)
+    return render_template("Main.html", bar_check=bar_check, percent=frames())
     bar_check = ''
 
 
