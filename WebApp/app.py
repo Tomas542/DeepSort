@@ -42,6 +42,7 @@ def page_main():
         elif request.form.get("About_Project"):
             return redirect("/about_project/")
         elif request.form.get("Show_video"):
+            bar_check = ''
             if check == 0:
                 if os.path.isfile('static/output.webm'):
                     return render_template("Main.html", filename='output')
@@ -52,12 +53,12 @@ def page_main():
                 bar_check = 'aaa'
                 percent = frames()
             return render_template("Main.html", bar_check=bar_check, percent=percent)
-            bar_check = ''
+
 
         elif request.form.get("Download_video"):
+            bar_check = ''
             if check == 0:
                 if os.path.isfile('static/output.webm'):
-                    flash('Video was sent to you.', 'success')
                     return send_file('static/output.webm', as_attachment=True)
                 else:
                     flash('There is no video.', 'danger')
@@ -66,11 +67,11 @@ def page_main():
                 bar_check = 'aaa'
                 percent = frames()
             return render_template("Main.html", bar_check=bar_check, percent=percent)
-            bar_check = ''
+
         elif request.form.get("Download_txt"):
+            bar_check = ''
             if check == 0:
                 if os.path.isfile('static/res.txt'):
-                    flash('Txt was sent to you.', 'success')
                     return send_file('static/res.txt', as_attachment=True)
                 else:
                     flash('There is no txt.', 'danger')
@@ -79,9 +80,9 @@ def page_main():
                 bar_check = 'aaa'
                 percent = frames()
             return render_template("Main.html", bar_check=bar_check, percent=percent)
-            bar_check = ''
         f = request.files['file']
         if f:
+            bar_check = ''
             filename = secure_filename(f.filename)
 
             if filename.split('.')[1] not in allowed_extensions:
@@ -138,7 +139,6 @@ def page_main():
         else:
             flash('No file selected!', 'danger')
     return render_template("Main.html", bar_check=bar_check, percent=percent)
-    bar_check = ''
 
 
 @app.route('/about_us/', methods=['GET', 'POST'])
