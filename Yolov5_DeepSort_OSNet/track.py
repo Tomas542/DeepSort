@@ -32,6 +32,8 @@ from yolov5.utils.plots import Annotator, colors, save_one_box
 from deep_sort.utils.parser import get_config
 from deep_sort.deep_sort import DeepSort
 
+from DeepSort_Gstreamer.WebApp.Frames import frames
+
 
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # yolov5 deepsort root directory
@@ -193,7 +195,6 @@ def detect(opt):
                 # draw boxes for visualization
                 if len(outputs[i]) > 0:
                     for j, (output) in enumerate(outputs[i]):
-
                         bboxes = output[0:4]
                         id = output[4]
                         cls = output[5]
@@ -237,7 +238,7 @@ def detect(opt):
                             if save_crop:
                                 txt_file_name = txt_file_name if (isinstance(path, list) and len(path) > 1) else ''
                                 save_one_box(bboxes, imc, file=save_dir / 'crops' / txt_file_name / names[c] / f'{id}' / f'{p.stem}.jpg', BGR=True)
-
+                our_frames = s.split(' ')[2].replace('(', '').replace(')', '').replace('/', ' ')
                 LOGGER.info(f'{s}Done. YOLO:({t3 - t2:.3f}s), DeepSort:({t5 - t4:.3f}s)')
 
             else:

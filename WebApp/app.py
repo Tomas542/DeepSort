@@ -6,6 +6,7 @@ import psycopg2
 from time import sleep
 from Del_func import Del
 from Add_time import Add_time
+from Frames import frames
 
 
 app = Flask(__name__)
@@ -15,7 +16,7 @@ check = 0
 
 conn = psycopg2.connect(database="webapp_db",
                         user="postgres",
-                        password="123",
+                        password="1234567890",
                         host="localhost",
                         port="5432")
 
@@ -31,6 +32,7 @@ def index():
 @app.route('/main', methods=['POST', 'GET'])
 def page_main():
     global check
+    bar_check = ''
     if request.method == 'POST':
         if request.form.get('Main'):
             return redirect("/main")
@@ -46,7 +48,10 @@ def page_main():
                     flash('Upload video, please.', 'danger')
             else:
                 flash('Video is being processed!', 'danger')
-            return redirect("/main")
+                bar_check = 'aaa'
+            return render_template("Main.html", bar_check=bar_check)
+            bar_check = ''
+
         elif request.form.get("Download_video"):
             if check == 0:
                 if os.path.isfile('static/output.webm'):
@@ -56,7 +61,10 @@ def page_main():
                     flash('There is no video.', 'danger')
             else:
                 flash('Video is being processed!', 'danger')
-            return redirect("/main")
+                print(int(our_frames))
+                bar_check = 'aaa'
+            return render_template("Main.html", bar_check=bar_check)
+            bar_check = ''
         elif request.form.get("Download_txt"):
             if check == 0:
                 if os.path.isfile('static/res.txt'):
@@ -66,7 +74,9 @@ def page_main():
                     flash('There is no txt.', 'danger')
             else:
                 flash('Video is being processed!', 'danger')
-            return redirect("/main")
+                bar_check = 'aaa'
+            return render_template("Main.html", bar_check=bar_check)
+            bar_check = ''
         f = request.files['file']
         if f:
             filename = secure_filename(f.filename)
@@ -120,9 +130,11 @@ def page_main():
                     check = 0
                 else:
                     flash('Video is being processed!', 'danger')
+                    bar_check = 'aaa'
         else:
             flash('No file selected!', 'danger')
-    return render_template('Main.html')
+    return render_template("Main.html", bar_check=bar_check)
+    bar_check = ''
 
 
 @app.route('/about_us/', methods=['GET', 'POST'])

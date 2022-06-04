@@ -29,7 +29,15 @@
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     {% for message in messages %}
-                        {{ message }}
+                        {% if bar_check %}
+                            {{ message }}
+                            <p>
+                            <label for="file">File progress:</label>
+                            <progress id="file" max="100" value="70"> 70% </progress>
+                            </p>
+                        {% else %}
+                            {{ message }}
+                        {% endif %}
                     {% endfor %}
                 {% endif %}
             {% endwith %}
