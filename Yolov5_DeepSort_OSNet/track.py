@@ -1,5 +1,7 @@
 # limit the number of cpus used by high performance libraries
 import os
+import string
+
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
@@ -188,7 +190,6 @@ def detect(opt):
                 # draw boxes for visualization
                 if len(outputs[i]) > 0:
                     for j, (output) in enumerate(outputs[i]):
-
                         bboxes = output[0:4]
                         id = output[4]
                         cls = output[5]
@@ -217,7 +218,7 @@ def detect(opt):
                             if save_crop:
                                 txt_file_name = txt_file_name if (isinstance(path, list) and len(path) > 1) else ''
                                 save_one_box(bboxes, imc, file=save_dir / 'crops' / txt_file_name / names[c] / f'{id}' / f'{p.stem}.jpg', BGR=True)
-
+                our_frames = s.split(' ')[2].replace('(', '').replace(')', '').replace('/', ' ')
                 LOGGER.info(f'{s}Done. YOLO:({t3 - t2:.3f}s), DeepSort:({t5 - t4:.3f}s)')
 
             else:
