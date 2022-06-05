@@ -1,5 +1,5 @@
-def Add_time():
-    with open('static/res.txt', 'r') as r, open('../Yolov5_DeepSort_OSNet/time.txt', 'r') as t, open('static/res1.txt',
+def Add_time(f1, f2, f3):
+    with open(f1, 'r') as r, open(f2, 'r') as t, open(f3,
                                                                                                      'w') as nr:
         rlines = r.readlines()
         tlines = t.readlines()

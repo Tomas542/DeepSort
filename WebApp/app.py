@@ -29,7 +29,7 @@ def index():
     return redirect("/main")
 
 
-@app.route('/main', methods=['POST', 'GET'])
+@app.route('/main', methods=['GET', 'POST'])
 def page_main():
     global check
     percent = 0
@@ -113,7 +113,7 @@ def page_main():
                             sleep(0.5)
                     video = filename.split('.')[0]
 
-                    Add_time()
+                    Add_time('static/res.txt', '../Yolov5_DeepSort_OSNet/time.txt', 'static/res1.txt')
 
                     os.rename('static/res1.txt', 'static/res.txt')
 
